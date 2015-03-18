@@ -1,0 +1,8 @@
+c:\users\joeal_000\documents\visual studio 2013\Projects\simpleContagion\simpleContagion\bin\Debug\simpleContagion.exe.config
+c:\users\joeal_000\documents\visual studio 2013\Projects\simpleContagion\simpleContagion\bin\Debug\simpleContagion.exe
+c:\users\joeal_000\documents\visual studio 2013\Projects\simpleContagion\simpleContagion\bin\Debug\simpleContagion.pdb
+c:\users\joeal_000\documents\visual studio 2013\Projects\simpleContagion\simpleContagion\bin\Debug\ClarionLibrary.dll
+c:\users\joeal_000\documents\visual studio 2013\Projects\simpleContagion\simpleContagion\bin\Debug\ClarionLibrary.xml
+c:\users\joeal_000\documents\visual studio 2013\Projects\simpleContagion\simpleContagion\obj\Debug\simpleContagion.csprojResolveAssemblyReference.cache
+c:\users\joeal_000\documents\visual studio 2013\Projects\simpleContagion\simpleContagion\obj\Debug\simpleContagion.exe
+c:\users\joeal_000\documents\visual studio 2013\Projects\simpleContagion\simpleContagion\obj\Debug\simpleContagion.pdb
