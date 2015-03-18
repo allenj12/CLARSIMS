@@ -60,10 +60,6 @@ namespace SimpleContagion
 
             InitializeWorld();
 
-            //the confederate "agent" will be easier implented as just a set of the drives it wants emulate
-            //since the experiment the confederate was just an actor and not a test subject
-            double[] confederate = new double[6];
-
             //create the rest of the agents and store them
             for (int i = 0; i < num_agents; i++)
             {
@@ -205,8 +201,8 @@ namespace SimpleContagion
 
             //Affliation and Belongingness
             DriveEquation abEq = AgentInitializer.InitializeDriveComponent(ab, DriveEquation.Factory);
-            autonomy.Commit(abEq);
-            actor.Commit(autonomy);
+            ab.Commit(abEq);
+            actor.Commit(ab);
 
             //autonomy
             DriveEquation autonomyEq = AgentInitializer.InitializeDriveComponent(autonomy, DriveEquation.Factory);
