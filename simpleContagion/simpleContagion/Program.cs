@@ -47,7 +47,7 @@ namespace SimpleContagion
         static double[][] drives = new double[numAgents][];
 
         // affect look up table
-        static double[, ,] affect_table = new double[6, 3, 3];
+        static double[, ,] affectTable = new double[6, 3, 3];
 
         static Random rand = new Random();
 
@@ -63,9 +63,8 @@ namespace SimpleContagion
             //create the rest of the agents and store them
             for (int i = 0; i < numAgents; i++)
             {
-                Agent actor = World.NewAgent(i.ToString());
-                InitializeAgent(actor);
-                actors[i] = actor;
+                actors[i] = World.NewAgent(i.ToString());
+                InitializeAgent(actors[i]);
             }
 
             // will start the simulation
@@ -74,11 +73,12 @@ namespace SimpleContagion
             // compute final affect and benchmarks
             Test();
 
+            /*
             for (int i = 0; i < numAgents; i++)
             {
-                Agent actor = actors[i];
-                actor.Die();
+                actors[i].Die();
             }
+            */
 
             Console.WriteLine("Done");
             Console.WriteLine("Press any key to exit");
@@ -93,87 +93,87 @@ namespace SimpleContagion
             //instead of flat doubles
             //indexing is by [drive name, drive value, action potential]
 
-            affect_table[AandB, low, low] = .05;
-            affect_table[AandB, low, med] = .1;
-            affect_table[AandB, low, high] = 1.5;
+            affectTable[AandB, low, low] = .05;
+            affectTable[AandB, low, med] = .1;
+            affectTable[AandB, low, high] = 1.5;
 
-            affect_table[AandB, med, low] = -.05;
-            affect_table[AandB, med, med] = .05;
-            affect_table[AandB, med, high] = .3;
+            affectTable[AandB, med, low] = -.05;
+            affectTable[AandB, med, med] = .05;
+            affectTable[AandB, med, high] = .3;
 
-            affect_table[AandB, high, low] = -.1;
-            affect_table[AandB, high, med] = .3;
-            affect_table[AandB, high, high] = .7;
+            affectTable[AandB, high, low] = -.1;
+            affectTable[AandB, high, med] = .3;
+            affectTable[AandB, high, high] = .7;
 
             //--
 
-            affect_table[auto, low, low] = .05;
-            affect_table[auto, low, med] = .1;
-            affect_table[auto, low, high] = 1.5;
+            affectTable[auto, low, low] = .05;
+            affectTable[auto, low, med] = .1;
+            affectTable[auto, low, high] = 1.5;
 
-            affect_table[auto, med, low] = -.1;
-            affect_table[auto, med, med] = .3;
-            affect_table[auto, med, high] = .5;
+            affectTable[auto, med, low] = -.1;
+            affectTable[auto, med, med] = .3;
+            affectTable[auto, med, high] = .5;
 
-            affect_table[auto, high, low] = -.3;
-            affect_table[auto, high, med] = .3;
-            affect_table[auto, high, high] = .7;
+            affectTable[auto, high, low] = -.3;
+            affectTable[auto, high, med] = .3;
+            affectTable[auto, high, high] = .7;
 
             //-- simulance seems it would be similar to AandB
 
-            affect_table[sim, low, low] = .05;
-            affect_table[sim, low, med] = .1;
-            affect_table[sim, low, high] = 1.5;
+            affectTable[sim, low, low] = .05;
+            affectTable[sim, low, med] = .1;
+            affectTable[sim, low, high] = 1.5;
 
-            affect_table[sim, med, low] = -.05;
-            affect_table[sim, med, med] = .05;
-            affect_table[sim, med, high] = .3;
+            affectTable[sim, med, low] = -.05;
+            affectTable[sim, med, med] = .05;
+            affectTable[sim, med, high] = .3;
 
-            affect_table[sim, high, low] = -.1;
-            affect_table[sim, high, med] = .3;
-            affect_table[sim, high, high] = .7;
+            affectTable[sim, high, low] = -.1;
+            affectTable[sim, high, med] = .3;
+            affectTable[sim, high, high] = .7;
 
             //-- similar to autonomy but slightly higher
 
-            affect_table[fair, low, low] = .05;
-            affect_table[fair, low, med] = .1;
-            affect_table[fair, low, high] = 1.5;
+            affectTable[fair, low, low] = .05;
+            affectTable[fair, low, med] = .1;
+            affectTable[fair, low, high] = 1.5;
 
-            affect_table[fair, med, low] = -.2;
-            affect_table[fair, med, med] = .4;
-            affect_table[fair, med, high] = .6;
+            affectTable[fair, med, low] = -.2;
+            affectTable[fair, med, med] = .4;
+            affectTable[fair, med, high] = .6;
 
-            affect_table[fair, high, low] = -.5;
-            affect_table[fair, high, med] = .4;
-            affect_table[fair, high, high] = .8;
-
-            //--
-
-            affect_table[DandP, low, low] = .05;
-            affect_table[DandP, low, med] = .1;
-            affect_table[DandP, low, high] = 1.5;
-
-            affect_table[DandP, med, low] = -.3;
-            affect_table[DandP, med, med] = .4;
-            affect_table[DandP, med, high] = .5;
-
-            affect_table[DandP, high, low] = -.8;
-            affect_table[DandP, high, med] = -.1;
-            affect_table[DandP, high, high] = .8;
+            affectTable[fair, high, low] = -.5;
+            affectTable[fair, high, med] = .4;
+            affectTable[fair, high, high] = .8;
 
             //--
 
-            affect_table[hon, low, low] = .05;
-            affect_table[hon, low, med] = .1;
-            affect_table[hon, low, high] = 1.5;
+            affectTable[DandP, low, low] = .05;
+            affectTable[DandP, low, med] = .1;
+            affectTable[DandP, low, high] = 1.5;
 
-            affect_table[hon, med, low] = -.3;
-            affect_table[hon, med, med] = .4;
-            affect_table[hon, med, high] = .5;
+            affectTable[DandP, med, low] = -.3;
+            affectTable[DandP, med, med] = .4;
+            affectTable[DandP, med, high] = .5;
 
-            affect_table[hon, high, low] = -.8;
-            affect_table[hon, high, med] = -.1;
-            affect_table[hon, high, high] = .8;
+            affectTable[DandP, high, low] = -.8;
+            affectTable[DandP, high, med] = -.1;
+            affectTable[DandP, high, high] = .8;
+
+            //--
+
+            affectTable[hon, low, low] = .05;
+            affectTable[hon, low, med] = .1;
+            affectTable[hon, low, high] = 1.5;
+
+            affectTable[hon, med, low] = -.3;
+            affectTable[hon, med, med] = .4;
+            affectTable[hon, med, high] = .5;
+
+            affectTable[hon, high, low] = -.8;
+            affectTable[hon, high, med] = -.1;
+            affectTable[hon, high, high] = .8;
 
 
             for (int i = 0; i < numAgents; i++)
@@ -283,9 +283,8 @@ namespace SimpleContagion
             //which right now is random
             for (int i = 0; i < numAgents; i++)
             {
-                Agent actor = actors[i];
 
-                SensoryInformation si = World.NewSensoryInformation(actor);
+                SensoryInformation si = World.NewSensoryInformation(actors[i]);
 
                 double ab = rand.NextDouble();
                 double aut = rand.NextDouble();
@@ -311,10 +310,10 @@ namespace SimpleContagion
                 drives[i][hon] = h;
 
 
-                actor.Perceive(si);
+                actors[i].Perceive(si);
 
                 //compute initial affect for all the agents
-                double initAffect = computeInitialAffect(i, drives[i]);
+                double initAffect = computeInitialAffect(drives[i]);
                 affects[i][0] = initAffect;
             }
 
@@ -343,34 +342,64 @@ namespace SimpleContagion
                         if (k != j)
                         {
                                                 //own affect                    //other's time weighted affect
-                            affects[k][i] = alpha * affects[k][i - 1] + beta * lambda * avgAffect + presenterAffect / (1 - lambda);
+                            affects[k][i] = alpha * affects[k][i - 1] + beta * (lambda * avgAffect + presenterAffect * (1 - lambda));
                         }
                     }
                 }
             }
 
+            //write a dataframe so we can analyze the data using R.
             Console.SetOut(sw);
 
-            Console.WriteLine(mood);
+            //header
+            string[] header = new string[] { "confederate" ,"one", "two", "three", "four", "five" };
 
-            Console.Write("here is a list of the affects array (each agent is its own array in the affects array in order)");
-            Console.WriteLine("------------------------------------");
-            Console.WriteLine(affects);
-            Console.WriteLine("------------------------------------");
+            for (int k = 0; k < numAgents + 1; k++)
+            {
+                Console.Write(header[k]);
+
+                if (k != numAgents)
+                {
+                    Console.Write("\t");
+                }
+            }
+
+            Console.Write("\n");
+
+            //table
+            for (int i = 0; i < numTestTrials; i++)
+            {
+                    Console.Write(confederateAffect);
+                    Console.Write("\t");
+ 
+                for (int k = 0; k < numAgents; k++)
+                {
+                        Console.Write(affects[k][i]);
+
+
+                        if (k != numAgents - 1)
+                        {
+                            Console.Write("\t");
+                        }
+                }
+
+                Console.Write("\n");
+            }
+
+            sw.Close();
             Console.SetOut(orig);
             Console.WriteLine("Finished");
         }
         public static void PreTrainingEquation(ActivationCollection input, ActivationCollection output)
-        //layed out all possible scenarios and just commented out the scenarios that shouldnt happen
         {
 
         }
 
-        public static double computeInitialAffect(int agen, double[] drvs)
+        public static double computeInitialAffect(double[] drvs)
         {
             int ind = 0;
             double max = 0;
-            double min = 1;
+            double min = 0;
 
             for (int i = 0; i < drvs.Length; i++)
             {
@@ -389,8 +418,11 @@ namespace SimpleContagion
                     ind = high;
                 }
 
-                max = Math.Max(max, affect_table[agen, ind, high]);
-                min = Math.Min(min, affect_table[agen, ind, high]);
+                //for now randonm action potential
+                int actionPotential = rand.Next(3);
+
+                max = Math.Max(max, affectTable[i, ind, actionPotential]);
+                min = Math.Min(min, affectTable[i, ind, actionPotential]);
             }
             return max + min;
         }
