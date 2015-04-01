@@ -9,3 +9,8 @@ c:\users\joeal_000\documents\visual studio 2013\Projects\simpleContagion\simpleC
 C:\Users\joeal_000\Documents\GitHub\CLARSIMS\simpleContagion\simpleContagion\bin\Debug\simpleContagion.exe.config
 C:\Users\joeal_000\Documents\GitHub\CLARSIMS\simpleContagion\simpleContagion\obj\Debug\simpleContagion.exe
 C:\Users\joeal_000\Documents\GitHub\CLARSIMS\simpleContagion\simpleContagion\obj\Debug\simpleContagion.pdb
+C:\Users\joeal_000\Documents\GitHub\CLARSIMS\simpleContagion\simpleContagion\bin\Debug\simpleContagion.exe
+C:\Users\joeal_000\Documents\GitHub\CLARSIMS\simpleContagion\simpleContagion\bin\Debug\simpleContagion.pdb
+C:\Users\joeal_000\Documents\GitHub\CLARSIMS\simpleContagion\simpleContagion\bin\Debug\ClarionLibrary.dll
+C:\Users\joeal_000\Documents\GitHub\CLARSIMS\simpleContagion\simpleContagion\bin\Debug\ClarionLibrary.xml
+C:\Users\joeal_000\Documents\GitHub\CLARSIMS\simpleContagion\simpleContagion\obj\Debug\simpleContagion.csprojResolveAssemblyReference.cache

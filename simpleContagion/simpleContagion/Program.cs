@@ -16,8 +16,8 @@ namespace SimpleContagion
     {
         public enum Groups { PRIVATE, PUBLIC }
 
-        static int num_agents = 5;
-        static int numTestTrials = num_agents + 2;
+        static int numAgents = 5;
+        static int numTestTrials = numAgents + 2;
 
         // for affect equation
         static double lambda = 0.1;
@@ -41,10 +41,10 @@ namespace SimpleContagion
 
 
         //sets an array of agents that will be used in the simulation
-        static Agent[] actors = new Agent[num_agents];
-        static double[][] affects = new double[num_agents][];
+        static Agent[] actors = new Agent[numAgents];
+        static double[][] affects = new double[numAgents][];
 
-        static double[][] drives = new double[num_agents][];
+        static double[][] drives = new double[numAgents][];
 
         // affect look up table
         static double[, ,] affect_table = new double[6, 3, 3];
@@ -61,10 +61,11 @@ namespace SimpleContagion
             InitializeWorld();
 
             //create the rest of the agents and store them
-            for (int i = 0; i < num_agents; i++)
+            for (int i = 0; i < numAgents; i++)
             {
                 Agent actor = World.NewAgent(i.ToString());
                 InitializeAgent(actor);
+                actors[i] = actor;
             }
 
             // will start the simulation
@@ -73,7 +74,7 @@ namespace SimpleContagion
             // compute final affect and benchmarks
             Test();
 
-            for (int i = 0; i < num_agents; i++)
+            for (int i = 0; i < numAgents; i++)
             {
                 Agent actor = actors[i];
                 actor.Die();
@@ -175,7 +176,11 @@ namespace SimpleContagion
             affect_table[hon, high, high] = .8;
 
 
-
+            for (int i = 0; i < numAgents; i++)
+            {
+                drives[i] = new double[6];
+                affects[i] = new double[numTestTrials];
+            }
 
         }
 
@@ -243,42 +248,43 @@ namespace SimpleContagion
 
         public static void Test()
         {
-            Console.Write("Performing Task...");
+            Console.WriteLine("Performing Task...");
 
             //generate confederates mood
             int index = rand.Next(moods.Length);
             string mood = moods[index];
 
-            double confederate_affect = 0;
+            double confederateAffect = 0;
 
             if (mood == "cheerful")
             {
-                confederate_affect = .9;
+                confederateAffect = .9;
             }
 
             else if (mood == "serene")
             {
-                confederate_affect = .3;
+                confederateAffect = .3;
             }
 
             else if (mood == "hostile")
             {
-                confederate_affect = -.9;
+                confederateAffect = -.9;
             }
 
             else if (mood == "depressed")
             {
-                confederate_affect = -.3;
+                confederateAffect = -.3;
             }
 
-            Console.WriteLine(mood);
+            Console.WriteLine("the Initial mood of the confederate is: {0}", mood);
 
             //each agent reads the materials to be discussed and percieves them differently depending 
             //on there department/candidate or how they percieve the group relations 
             //which right now is random
-            for (int i = 0; i < num_agents; i++)
+            for (int i = 0; i < numAgents; i++)
             {
                 Agent actor = actors[i];
+
                 SensoryInformation si = World.NewSensoryInformation(actor);
 
                 double ab = rand.NextDouble();
@@ -313,27 +319,31 @@ namespace SimpleContagion
             }
 
             //each agent gives its presentation to the others and we record the affects
+            double presenterAffect;
+            double avgAffect;
             for (int i = 1; i < numTestTrials; i++)
             {
-                for (int j = -1; i < num_agents; j++)
+                for (int j = -1; j < numAgents; j++)
                 {
                     if (j == -1)
                     {
-                        double presnterAffect = confederate_affect;
+                        presenterAffect = confederateAffect;
+                        avgAffect = confederateAffect; 
                     }
                     else
                     {
-                        double presenterAffect = affects[j][i - 1];
+                        presenterAffect = affects[j][i - 1];
+                        avgAffect = averageAffect(affects[j]);
                     }
                     //curAffect will be the look up table after some details are worked out
                     //avgAffect(agent_name) will be time waited and not a true average
 
-                    for (int k = 0; k < num_agents; k++)
+                    for (int k = 0; k < numAgents; k++)
                     {
                         if (k != j)
                         {
-                            //own affect                    //other's time weighted affect
-                            affects[k][i] = alpha * affects[k][i - 1] + beta * lambda * averageAffect(affects[j]) + affects[j][i - 1] / (1 - lambda);
+                                                //own affect                    //other's time weighted affect
+                            affects[k][i] = alpha * affects[k][i - 1] + beta * lambda * avgAffect + presenterAffect / (1 - lambda);
                         }
                     }
                 }
