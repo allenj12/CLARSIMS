@@ -18,6 +18,7 @@ namespace SimpleContagion
 
         static int numAgents = 5;
         static int numTestTrials = numAgents + 2;
+		static int numTrainingTrials = 100;
 
         // for affect equation
         static double lambda = 0.1;
@@ -48,6 +49,11 @@ namespace SimpleContagion
 
         // affect look up table
         static double[, ,] affectTable = new double[6, 3, 3];
+
+		//holds list of actions
+		static List<ExternalActionChunk> acts = new List<ExternalActionChunk>();
+
+		static GenericEquation trainer = ImplicitComponentInitializer.InitializeTrainer(GenericEquation.Factory, (Equation)PreTrainingEquation);
 
         static Random rand = new Random();
 
@@ -182,6 +188,14 @@ namespace SimpleContagion
                 affects[i] = new double[numTestTrials];
             }
 
+
+			acts.Add(World.NewExternalActionChunk("GiveStrongPresentation"));
+			acts.Add(World.NewExternalActionChunk("GiveAccuratePresentation"));
+			acts.Add(World.NewExternalActionChunk("GivePleasentPresentation"));
+			acts.Add(World.NewExternalActionChunk("GiveSimilarPresentation"));
+			acts.Add(World.NewExternalActionChunk("GiveNormativePresentation"));
+			acts.Add(World.NewExternalActionChunk("GiveDifferentPresentation"));
+
         }
 
         public static void InitializeAgent(Agent actor)
@@ -235,15 +249,106 @@ namespace SimpleContagion
             actor.Commit(honor);
 
             //MCS
-            // goals not needed now since there is no actions to generalize yet
+			GoalSelectionModule gsm = AgentInitializer.InitializeMetaCognitiveModule(actor, GoalSelectionModule.Factory);
+			GoalSelectionEquation gse = AgentInitializer.InitializeMetaCognitiveDecisionNetwork(gsm, GoalSelectionEquation.Factory);
 
+			//inputs of drive strenghts to help set goals
+			gse.Input.Add(honor.GetDriveStrength());
+			gse.Input.Add(ab.GetDriveStrength());
+			gse.Input.Add(autonomy.GetDriveStrength());
+			gse.Input.Add(dominance.GetDriveStrength());
+			gse.Input.Add(fairness.GetDriveStrength());
+			gse.Input.Add(simulance.GetDriveStrength());
+
+			// goals
+			GoalChunk makeStrongImpression = World.NewGoalChunk("makeStrongImpression");
+			GoalChunk accuratePresentation = World.NewGoalChunk("accuratePresentation");
+			GoalChunk pleaseOthers = World.NewGoalChunk("pleaseOthers");
+			GoalChunk similarApproach = World.NewGoalChunk("similarApproach"); // less exagerated and more aboet norms
+			GoalChunk usualApproach = World.NewGoalChunk("usualApproach"); //an exagerated "average" of the others compared to similar approach
+			GoalChunk differentApproach = World.NewGoalChunk("differentApproach");
+
+			//set update goal action chunks
+			GoalStructureUpdateActionChunk makeStrongImpressionAct = World.NewGoalStructureUpdateActionChunk();
+			makeStrongImpressionAct.Add(GoalStructure.RecognizedActions.SET_RESET, makeStrongImpression);
+
+			GoalStructureUpdateActionChunk accuratePresentationAct = World.NewGoalStructureUpdateActionChunk();
+			accuratePresentationAct.Add(GoalStructure.RecognizedActions.SET_RESET, accuratePresentation);
+
+			GoalStructureUpdateActionChunk pleaseOthersAct = World.NewGoalStructureUpdateActionChunk();
+			pleaseOthersAct.Add(GoalStructure.RecognizedActions.SET_RESET, pleaseOthers);
+
+			GoalStructureUpdateActionChunk similarApproachAct = World.NewGoalStructureUpdateActionChunk();
+			similarApproachAct.Add(GoalStructure.RecognizedActions.SET_RESET, similarApproach);
+
+			GoalStructureUpdateActionChunk usualApproachAct = World.NewGoalStructureUpdateActionChunk();
+			usualApproachAct.Add(GoalStructure.RecognizedActions.SET_RESET, usualApproach);
+
+			GoalStructureUpdateActionChunk differentApproachAct = World.NewGoalStructureUpdateActionChunk();
+			differentApproachAct.Add(GoalStructure.RecognizedActions.SET_RESET, differentApproach);
+
+			gsm.SetRelevance(makeStrongImpressionAct, dominance, .8);
+			gsm.SetRelevance(makeStrongImpressionAct, fairness, .3);
+			gsm.SetRelevance(makeStrongImpressionAct, honor, .3);
+
+			gsm.SetRelevance(accuratePresentationAct, fairness, .8);
+			gsm.SetRelevance(accuratePresentationAct, honor, 4);
+			gsm.SetRelevance(accuratePresentationAct, simulance, 2);
+
+
+			gsm.SetRelevance(pleaseOthersAct, ab, .8);
+
+			gsm.SetRelevance(similarApproachAct, simulance, .8);
+			gsm.SetRelevance(similarApproachAct, ab, .2);
+
+			gsm.SetRelevance(differentApproachAct, autonomy, .8);
+			gsm.SetRelevance(differentApproachAct, dominance, .3);
+
+			gsm.SetRelevance(usualApproachAct, honor, .8);
+			gsm.SetRelevance(usualApproachAct, fairness, .3);
+
+			gse.Output.Add(makeStrongImpressionAct);
+			gse.Output.Add(accuratePresentationAct);
+			gse.Output.Add(pleaseOthersAct);
+			gse.Output.Add(similarApproachAct);
+			gse.Output.Add(usualApproachAct);
+			gse.Output.Add(differentApproachAct);
+
+			gsm.Commit(gse);
+			actor.Commit(gsm);
+
+			net.Input.Add(makeStrongImpression);
+			net.Input.Add(accuratePresentation);
+			net.Input.Add(pleaseOthers);
+			net.Input.Add(similarApproach);
+			net.Input.Add(usualApproach);
+			net.Input.Add(differentApproach);
+
+			net.Output.AddRange(acts);
+
+			actor.Commit(net);
+
+			trainer.Input.Add(makeStrongImpression);
+			trainer.Input.Add(accuratePresentation);
+			trainer.Input.Add(pleaseOthers);
+			trainer.Input.Add(similarApproach);
+			trainer.Input.Add(usualApproach);
+			trainer.Input.Add(differentApproach);
+
+			trainer.Output.AddRange(acts);
+
+			trainer.Commit();
+
+			PreTrainACS(net);
         }
 
-        //not needed until context is added
         public static void PreTrainACS(BPNetwork net)
         {
 
-            //No ACS until model is more complicated
+			Console.Write("Pre-training ACS...");
+
+			List<ActivationCollection> dataSets = new List<ActivationCollection>();
+			ImplicitComponentInitializer.Train (net, trainer, numIterations: numTrainingTrials, randomTraversal: true, dataSets: dataSets.ToArray());
         }
 
         public static void Test()
@@ -301,7 +406,7 @@ namespace SimpleContagion
                 si[Drive.MetaInfoReservations.STIMULUS, typeof(HonorDrive).Name] = h;
 
                 //saves the drive values since there constant once the material is handed out for now
-                //and is cleaner than using the Agent.Get methods
+                //and is faster than using the Agent.Get methods
                 drives[i][AandB] = ab;
                 drives[i][auto] = aut;
                 drives[i][sim] = s;
@@ -392,6 +497,35 @@ namespace SimpleContagion
         }
         public static void PreTrainingEquation(ActivationCollection input, ActivationCollection output)
         {
+			if (input [World.GetGoalChunk ("MakeStrongPresentation")] > 0) 
+			{
+				output[World.GetActionChunk("GiveStrongPresentation")] = 1;
+			}
+
+			if (input [World.GetGoalChunk ("MakeAccuratePresentation")] > 0) 
+			{
+				output[World.GetActionChunk("GiveAccuratePresentation")] = 1;
+			}
+
+			if (input [World.GetGoalChunk ("MakePleasentPresentation")] > 0) 
+			{
+				output[World.GetActionChunk("GivePleasentPresentation")] = 1;
+			}
+
+			if (input [World.GetGoalChunk ("MakeSimilarPresentation")] > 0) 
+			{
+				output[World.GetActionChunk("GiveSimilarPresentation")] = 1;
+			}
+
+			if (input [World.GetGoalChunk ("MakeDifferentPresentation")] > 0) 
+			{
+				output[World.GetActionChunk("GiveDifferentPresentation")] = 1;
+			}
+
+			if (input [World.GetGoalChunk ("MakeNormativePresentation")] > 0) 
+			{
+				output[World.GetActionChunk("GiveNormativePresentation")] = 1;
+			}
 
         }
 
