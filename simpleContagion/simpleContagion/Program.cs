@@ -51,9 +51,9 @@ namespace SimpleContagion
         static double[, ,] affectTable = new double[6, 3, 3];
 
 		//holds list of actions
-		static List<ExternalActionChunk> acts = new List<ExternalActionChunk>();
+        static List<ExternalActionChunk> acts = new List<ExternalActionChunk>();
 
-		static GenericEquation trainer = ImplicitComponentInitializer.InitializeTrainer(GenericEquation.Factory, (Equation)PreTrainingEquation);
+        static GenericEquation trainer = ImplicitComponentInitializer.InitializeTrainer(GenericEquation.Factory, (Equation)PreTrainingEquation);
 
         static Random rand = new Random();
 
@@ -328,16 +328,16 @@ namespace SimpleContagion
 
 			actor.Commit(net);
 
-			trainer.Input.Add(makeStrongImpression);
-			trainer.Input.Add(accuratePresentation);
-			trainer.Input.Add(pleaseOthers);
-			trainer.Input.Add(similarApproach);
-			trainer.Input.Add(usualApproach);
-			trainer.Input.Add(differentApproach);
+			//trainer.Input.Add(makeStrongImpression);
+			//trainer.Input.Add(accuratePresentation);
+			//trainer.Input.Add(pleaseOthers);
+			//trainer.Input.Add(similarApproach);
+			//trainer.Input.Add(usualApproach);
+			//trainer.Input.Add(differentApproach);
 
-			trainer.Output.AddRange(acts);
+			//trainer.Output.AddRange(acts);
 
-			trainer.Commit();
+			//trainer.Commit();
 
 			PreTrainACS(net);
         }
