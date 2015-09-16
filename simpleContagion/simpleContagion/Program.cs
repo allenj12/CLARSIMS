@@ -19,6 +19,7 @@ namespace SimpleContagion
         static int numAgents = 5;
         static int numTestTrials = numAgents + 2;
 		static int numTrainingTrials = 100;
+		static int numRepeats = 1000;
 
         // for affect equation
         static double lambda = 0.1;
@@ -66,26 +67,34 @@ namespace SimpleContagion
 
             InitializeWorld();
 
-            //create the rest of the agents and store them
-            for (int i = 0; i < numAgents; i++)
-            {
-                actors[i] = World.NewAgent(i.ToString());
-                InitializeAgent(actors[i]);
-            }
+			for (int j=0; j<numRepeats; j++)
+			{
+				Console.SetOut(orig);
+				Console.WriteLine("Starting trial {0}", j);
 
-            // will start the simulation
-            // will give the material out and compute all the pre non confederate affects
-            // each agent will give a "presentation" then re compute the affect
-            // compute final affect and benchmarks
-            Test();
+				Console.SetOut(sw);
+				
+	            //create the rest of the agents and store them
+	            for (int i = 0; i < numAgents; i++)
+	            {
+					actors[i] = World.NewAgent(i.ToString());
+	                InitializeAgent(actors[i]);
+	            }
 
-            /*
-            for (int i = 0; i < numAgents; i++)
-            {
-                actors[i].Die();
-            }
-            */
+	            // will start the simulation
+	            // will give the material out and compute all the pre non confederate affects
+	            // each agent will give a "presentation" then re compute the affect
+	            // compute final affect and benchmarks
+	            Test(j);
 
+	            
+	            for (int i = 0; i < numAgents; i++)
+	            {
+	                actors[i].Die();
+	            }
+			}
+
+			Console.SetOut(orig);
             Console.WriteLine("Done");
             Console.WriteLine("Press any key to exit");
             Console.ReadKey();
@@ -101,7 +110,7 @@ namespace SimpleContagion
 
             affectTable[AandB, low, low] = .05;
             affectTable[AandB, low, med] = .1;
-            affectTable[AandB, low, high] = 1.5;
+            affectTable[AandB, low, high] = .15;
 
             affectTable[AandB, med, low] = -.05;
             affectTable[AandB, med, med] = .05;
@@ -115,7 +124,7 @@ namespace SimpleContagion
 
             affectTable[auto, low, low] = .05;
             affectTable[auto, low, med] = .1;
-            affectTable[auto, low, high] = 1.5;
+            affectTable[auto, low, high] = .15;
 
             affectTable[auto, med, low] = -.1;
             affectTable[auto, med, med] = .3;
@@ -129,7 +138,7 @@ namespace SimpleContagion
 
             affectTable[sim, low, low] = .05;
             affectTable[sim, low, med] = .1;
-            affectTable[sim, low, high] = 1.5;
+            affectTable[sim, low, high] = .15;
 
             affectTable[sim, med, low] = -.05;
             affectTable[sim, med, med] = .05;
@@ -143,7 +152,7 @@ namespace SimpleContagion
 
             affectTable[fair, low, low] = .05;
             affectTable[fair, low, med] = .1;
-            affectTable[fair, low, high] = 1.5;
+            affectTable[fair, low, high] = .15;
 
             affectTable[fair, med, low] = -.2;
             affectTable[fair, med, med] = .4;
@@ -157,7 +166,7 @@ namespace SimpleContagion
 
             affectTable[DandP, low, low] = .05;
             affectTable[DandP, low, med] = .1;
-            affectTable[DandP, low, high] = 1.5;
+            affectTable[DandP, low, high] = .15;
 
             affectTable[DandP, med, low] = -.3;
             affectTable[DandP, med, med] = .4;
@@ -171,7 +180,7 @@ namespace SimpleContagion
 
             affectTable[hon, low, low] = .05;
             affectTable[hon, low, med] = .1;
-            affectTable[hon, low, high] = 1.5;
+            affectTable[hon, low, high] = .15;
 
             affectTable[hon, med, low] = -.3;
             affectTable[hon, med, med] = .4;
@@ -345,15 +354,15 @@ namespace SimpleContagion
         public static void PreTrainACS(BPNetwork net)
         {
 
-			Console.Write("Pre-training ACS...");
+			//Console.Write("Pre-training ACS...");
 
 			List<ActivationCollection> dataSets = new List<ActivationCollection>();
 			ImplicitComponentInitializer.Train (net, trainer, numIterations: numTrainingTrials, randomTraversal: true, dataSets: dataSets.ToArray());
         }
 
-        public static void Test()
+		public static void Test(int trial)
         {
-            Console.WriteLine("Performing Task...");
+            //Console.Write("Performing Task...");
 
             //generate confederates mood
             int index = rand.Next(moods.Length);
@@ -381,7 +390,7 @@ namespace SimpleContagion
                 confederateAffect = -.3;
             }
 
-            Console.WriteLine("the Initial mood of the confederate is: {0}", mood);
+            //Console.WriteLine("the Initial mood of the confederate is: {0}", mood);
 
             //each agent reads the materials to be discussed and percieves them differently depending 
             //on there department/candidate or how they percieve the group relations 
@@ -454,16 +463,16 @@ namespace SimpleContagion
             }
 
             //write a dataframe so we can analyze the data using R.
-            Console.SetOut(sw);
+            //Console.SetOut(sw);
 
             //header
-            string[] header = new string[] { "confederate" ,"one", "two", "three", "four", "five" };
+            string[] header = new string[] { "trial", "confederate" ,"one", "two", "three", "four", "five" };
 
-            for (int k = 0; k < numAgents + 1; k++)
+            for (int k = 0; k < numAgents + 2; k++)
             {
                 Console.Write(header[k]);
 
-                if (k != numAgents)
+                if (k != numAgents+1)
                 {
                     Console.Write("\t");
                 }
@@ -474,8 +483,10 @@ namespace SimpleContagion
             //table
             for (int i = 0; i < numTestTrials; i++)
             {
-                    Console.Write(confederateAffect);
-                    Console.Write("\t");
+					Console.Write(trial);
+					Console.Write("\t");
+					Console.Write(confederateAffect);
+					Console.Write ("\t");
  
                 for (int k = 0; k < numAgents; k++)
                 {
@@ -488,12 +499,8 @@ namespace SimpleContagion
                         }
                 }
 
-                Console.Write("\n");
+                Console.WriteLine();
             }
-
-            sw.Close();
-            Console.SetOut(orig);
-            Console.WriteLine("Finished");
         }
         public static void PreTrainingEquation(ActivationCollection input, ActivationCollection output)
         {

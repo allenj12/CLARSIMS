@@ -1,0 +1,7 @@
+/home/joe/Documents/masters/CLARSIMS/simpleContagion/simpleContagion/obj/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/joe/Documents/masters/CLARSIMS/simpleContagion/simpleContagion/bin/Debug/simpleContagion.exe.config
+/home/joe/Documents/masters/CLARSIMS/simpleContagion/simpleContagion/bin/Debug/simpleContagion.exe.mdb
+/home/joe/Documents/masters/CLARSIMS/simpleContagion/simpleContagion/bin/Debug/simpleContagion.exe
+/home/joe/Documents/masters/CLARSIMS/simpleContagion/simpleContagion/obj/Debug/simpleContagion.exe
+/home/joe/Documents/masters/CLARSIMS/simpleContagion/simpleContagion/obj/Debug/simpleContagion.exe.mdb
+/home/joe/Documents/masters/CLARSIMS/simpleContagion/simpleContagion/bin/Debug/ClarionLibrary.dll
