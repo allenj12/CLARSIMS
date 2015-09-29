@@ -43,7 +43,6 @@ namespace SimpleContagion
 
 
         //sets an array of agents that will be used in the simulation
-        static Agent[] actors = new Agent[numAgents];
         static double[][] affects = new double[numAgents][];
 
         static double[][] drives = new double[numAgents][];
@@ -67,16 +66,19 @@ namespace SimpleContagion
 
             InitializeWorld();
 
+	
 			for (int j=0; j<numRepeats; j++)
 			{
 				Console.SetOut(orig);
 				Console.WriteLine("Starting trial {0}", j);
 
 				Console.SetOut(sw);
+
+				Agent[] actors = new Agent[numAgents];
 				
 	            //create the rest of the agents and store them
 	            for (int i = 0; i < numAgents; i++)
-	            {
+				{
 					actors[i] = World.NewAgent(i.ToString());
 	                InitializeAgent(actors[i]);
 	            }
@@ -85,7 +87,7 @@ namespace SimpleContagion
 	            // will give the material out and compute all the pre non confederate affects
 	            // each agent will give a "presentation" then re compute the affect
 	            // compute final affect and benchmarks
-	            Test(j);
+	            Test(j, actors);
 
 	            
 	            for (int i = 0; i < numAgents; i++)
@@ -360,7 +362,7 @@ namespace SimpleContagion
 			ImplicitComponentInitializer.Train (net, trainer, numIterations: numTrainingTrials, randomTraversal: true, dataSets: dataSets.ToArray());
         }
 
-		public static void Test(int trial)
+		public static void Test(int trial, Agent[] actors)
         {
             //Console.Write("Performing Task...");
 
@@ -501,6 +503,7 @@ namespace SimpleContagion
 
                 Console.WriteLine();
             }
+			sw.Close ();
         }
         public static void PreTrainingEquation(ActivationCollection input, ActivationCollection output)
         {

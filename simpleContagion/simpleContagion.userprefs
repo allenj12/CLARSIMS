@@ -1,9 +1,8 @@
-﻿<Properties>
+﻿<Properties StartupItem="simpleContagion/simpleContagion.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="simpleContagion/Program.cs">
     <Files>
-      <File FileName="simpleContagion/Program.cs" Line="331" Column="1" />
-      <File FileName="../../tersim.cs" Line="370" Column="29" />
+      <File FileName="simpleContagion/Program.cs" Line="81" Column="6" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
