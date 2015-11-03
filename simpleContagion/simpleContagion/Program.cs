@@ -44,6 +44,8 @@ namespace SimpleContagion
 
         //sets an array of agents that will be used in the simulation
         static double[][] affects = new double[numAgents][];
+        static List<double> t = new List<double>();
+        static List<double> c = new List<double>();
 
         static double[][] drives = new double[numAgents][];
 
@@ -392,6 +394,8 @@ namespace SimpleContagion
                 confederateAffect = -.3;
             }
 
+            c.Add(confederateAffect);
+
             //Console.WriteLine("the Initial mood of the confederate is: {0}", mood);
 
             //each agent reads the materials to be discussed and percieves them differently depending 
@@ -464,10 +468,20 @@ namespace SimpleContagion
                 }
             }
 
+            for (int i = 0; i < numTestTrials; i+=7)
+            {
+                for (int k = 0; k < numAgents; k++)
+                {
+                    t.Add(affects[k][i+6] - affects[k][i]);
+                }
+            }
+
             //write a dataframe so we can analyze the data using R.
             //Console.SetOut(sw);
 
             //header
+
+            /*
             string[] header = new string[] { "trial", "confederate" ,"one", "two", "three", "four", "five" };
 
             for (int k = 0; k < numAgents + 2; k++)
@@ -504,6 +518,21 @@ namespace SimpleContagion
                 Console.WriteLine();
             }
 			sw.Close ();
+             */
+
+            Console.Write("confederate");
+            Console.Write("\t");
+            Console.Write("t");
+            Console.Write("\n");
+
+            for (int i = 0; i < t.Count(); i++)
+            {
+                Console.Write(c[i]);
+                Console.Write("\t");
+                Console.Write(t[i]);
+                Console.Write("\n");
+            }
+            sw.Close();
         }
         public static void PreTrainingEquation(ActivationCollection input, ActivationCollection output)
         {
